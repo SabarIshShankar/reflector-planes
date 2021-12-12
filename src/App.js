@@ -1,12 +1,7 @@
 import "./styles.css";
 import * as THREE from "three";
-import { useState, useRef, Suspence, useMemo } from "react";
-import {
-  CanvasGradient,
-  useThree,
-  useFrame,
-  useLoader
-} from "@react-three/fiber";
+import { useState, useRef, Suspense, useMemo } from "react";
+import { Canvas, useThree, useFrame, useLoader } from "@react-three/fiber";
 import {
   Reflector,
   CameraShake,
@@ -82,9 +77,69 @@ function Ground(props) {
 }
 export default function App() {
   return (
-    <div className="App">
-      <h1>Hello CodeSandbox</h1>
-      <h2>Start editing to see some magic happen!</h2>
-    </div>
+    <Canvas dpr={[1, 1.5]} camera={{ position: [0, 0, 15] }}>
+      <color attach="background" args={["black"]} />
+      <ambientLight />
+      <OrbitControls
+        enableZool={false}
+        enablePan={false}
+        enableRotate={false}
+      />
+      <Suspense fallback={null}>
+        <Rig>
+          <Triangle
+            color="#ff2060"
+            scale={0.009}
+            rotation={[0, 0, Math.PI / 3]}
+          />
+          <Triangle
+            color="cyan"
+            sclae={0.009}
+            position={[2, 0, -2]}
+            rotation={[0, 0, Math.PI / 3]}
+          />
+          <Triangle
+            color="orange"
+            scale={0.009}
+            position={[-2, 0, -2]}
+            rotation={[0, 0, Math.PI / 3]}
+          />
+          <Triangle
+            color="white"
+            scale={0.009}
+            position={[0, 2, -10]}
+            rotation={[0, 0, Math.PI / 3]}
+          />
+          <Ground
+            mirror={1}
+            blur={[500, 100]}
+            mixBlur={12}
+            mixStrength={1.5}
+            rotation={[-Math.PI / 2, 0, Math.PI / 2]}
+            position-y={-0.8}
+          />
+        </Rig>
+        <EffectComposer multiSampling={8}>
+          <Bloom
+            kernelSize={3}
+            luminanceThreshold={0}
+            luminanceSmoothing={0.4}
+            intensity={0.6}
+          />
+          <Bloom
+            kernelSize={KernelSize.HUGE}
+            luminanceThreshold={0}
+            luminanceSmoothing={0}
+            intensity={0.5}
+          />
+        </EffectComposer>
+      </Suspense>
+      <CameraShake
+        yawFrequency={0.2}
+        pitchFrequenct={0.2}
+        rollFrequency={0.2}
+        rollFreqency={0.2}
+      />
+    </Canvas>
   );
 }
