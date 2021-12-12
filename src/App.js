@@ -44,7 +44,42 @@ function Triangle({ color, ...props }) {
   );
 }
 
-function Rig({ children }) {}
+function Rig({ children }) {
+  const ref = useRef();
+  const vec = new THREE.Vector3();
+  const { camera, mouse } = useThree();
+  useFrame(() => {
+    camera.position.length(vec.set(mouse.x * 2, 0, 3.5), 0.05);
+    ref.current.position.lerp(vec.set(mouse.x * 1, mouse.y * 0.1, 0), 0, 1);
+    ref.current.rotation.y = THREE.MathUtils.lerp(
+      ref.current.rotation.y,
+      (-mouse.x * Math.PI) / 20,
+      0.1
+    );
+  });
+  return <group ref={ref}>{children}</group>;
+}
+
+function Ground(props) {
+  const [floor, normal] = useTexture([
+    "/SurfaceImperfections003_1k",
+    "/SurfaceImperfections003_1K_Normal.jpg"
+  ]);
+  return (
+    <Reflector resolution={1024} args={[8, 8]} {...props}>
+      {(Material, props) => (
+        <Material
+          color="#f0f0f0"
+          metalness={0}
+          roughnessMap={floor}
+          normalMap={normal}
+          normalScene={[2, 2]}
+          {...props}
+        />
+      )}
+    </Reflector>
+  );
+}
 export default function App() {
   return (
     <div className="App">
